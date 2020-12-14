@@ -1,0 +1,53 @@
+---
+title: "Women2020"
+author: "Fanny Ollivier"
+output: html_document
+  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyverse)
+library(RColorBrewer)
+library(wordcloud) # nuage de mots
+library(tm) # pour le texte
+```
+
+```{r}
+women <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-12-08/women.csv')
+```
+Visualisation : nuage de mots, une couleur par catégorie (category), dans une forme.
+
+```{r}
+#enlever la ligne 1 : unsung hero
+women<-women[-1,]
+women%>%
+  count(category)
+```
+
+
+```{r}
+# transformer du texte en corpus qui pourra être traité
+text_corpus <- Corpus(VectorSource(women$description))
+# enlever les majuscules
+#text_corpus <- tm_map(text_corpus, content_transformer(tolower))
+text_corpus <- tm_map(text_corpus, removePunctuation)
+text_corpus <- tm_map(text_corpus, function(x)removeWords(x,stopwords("english"))) #stopwords(kind = "fr") pour supprimer les mots les plus courants en français (le, la, les ...), par défaut en anglais
+ 
+ 
+set.seed(1234)
+
+wordcloud(text_corpus,min.freq = 3,scale = c(3, 0.3),
+          max.word=Inf,colors=brewer.pal(4,"Dark2"),
+          random.order = FALSE,random.color = TRUE)
+
+
+
+```
+
+
