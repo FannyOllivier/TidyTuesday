@@ -16,6 +16,8 @@ library(dplyr)
 library(grDevices)
 library(tidyverse)
 library(RColorBrewer)
+library(cowplot)
+library(magick) # draw_image
 library(wordcloud) # nuage de mots
 library(tm) # pour le texte
 ```
@@ -41,18 +43,64 @@ text_corpus <- Corpus(VectorSource(women$description))
 text_corpus <- tm_map(text_corpus, removePunctuation)
 text_corpus <- tm_map(text_corpus, function(x)removeWords(x,stopwords("english"))) #stopwords(kind = "fr") pour supprimer les mots les plus courants en français (le, la, les ...), par défaut en anglais
  
+while (!is.null(dev.list()))  dev.off() #debug dev.off() parfois
+ dev.set(dev.next()) # id
+ 
+ ### Debug dev.off() à essayer
+#  dev.new()
+# pdf("essai.pdf")
+# plot(essai(counts))
+# graphics.off()
 
- dev.set(dev.next())
+
 set.seed(1234)
-png(file="Women2020_2.png")
+png(file="Women2020_2.png",width=10, height=10, units="cm",res=200)
+#jpeg(file="Women2020_3.png",width=450, height=450, units="px",quality=90)
 wordcloud(text_corpus,min.freq = 3,scale = c(3, 0.3),
           max.word=Inf,colors=brewer.pal(4,"Dark2"),
           random.order = FALSE,random.color = TRUE)
 dev.off()
 
-#png(file="Women2020.png")
-# dev.off()
 
+
+```
+```{r}
+# essai de titre
+
+img<-image_read("Women2020.png") # transforme l'image en variable
+img2<-image_convert(img,"svg")
+##divers essais du package
+# img2<-image_convert(img,"svg")
+# print(img)
+# print(img2)
+# img3<-image_scale(img2,"700")
+# img4<-image_scale(img,"500")
+# img3<-image_convolve(img3)
+print(img)
+img
+print(img2)
+img2
+
+brewer.pal(4,"Dark2") # code hex 
+
+p <- ggplot() + 
+    draw_image(img2, x = 4.5, y = 2, scale = 9) + 
+        geom_text(aes(x =9, y = 0, label = "Source: BBC | Visualisation: @fanny_oll"),
+              colour = "#E7298A", size = 1.5)+
+        geom_text(aes(x=5, y=5.8, label="100 femmes inspirantes à travers le monde"),
+              colour ="#1B9E77", size= 6)+
+    xlim(0, 10)+
+    ylim(0, 6)+
+    theme(plot.background = element_rect(fill = "white", colour = "white"),
+          panel.background = element_rect(fill = "white"),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.title = element_blank(),
+          axis.ticks = element_blank(),
+          axis.text = element_blank())
+p
+dev.new()
+dev.copy2pdf(file="Women2020.pdf")
 
 ```
 
