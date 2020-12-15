@@ -1,3 +1,3 @@
 # TidyTuesday
 
-| 2020-12-08 | BBC's top 100 women of 2020 | [Rmd](Women2020.Rmd) |  ![quarter-size image](Women2020_vf.png)
+| 2020-12-08 | BBC's top 100 women of 2020 | [Rmd](Women2020.Rmd) |  ![tenth-size image](Women2020_vf.png)
